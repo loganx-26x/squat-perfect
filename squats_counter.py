@@ -34,7 +34,7 @@ def rescale_frame(frame, percent=50):
 # Getting the video
 angle_min = []
 angle_min_hip = []
-cap = cv2.VideoCapture("squats.mp4")
+cap = cv2.VideoCapture("squats2.mp4")
 
 
 # Curl counter variables
@@ -76,9 +76,13 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             landmarks = results.pose_landmarks.landmark
 
             # Get coordinates
-            shoulder = [
+            right_shoulder = [
                 landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
                 landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y,
+            ]
+            left_shoulder = [
+                landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
+                landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
             ]
 
             elbow = [
@@ -104,12 +108,12 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             ]
 
             # Calculate angles
-            angle = calculate_angle(shoulder, elbow, wrist)
+            angle = calculate_angle(right_shoulder, elbow, wrist)
 
             angle_knee = calculate_angle(hip, knee, ankle) 
             angle_knee = round(angle_knee, 2)
 
-            angle_hip = calculate_angle(shoulder, hip, knee)
+            angle_hip = calculate_angle(right_shoulder, hip, knee)
             angle_hip = round(angle_hip, 2)
 
             hip_angle = 180 - angle_hip
@@ -117,6 +121,9 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
 
             angle_min.append(angle_knee)
             angle_min_hip.append(angle_hip)
+
+            vertical_point = [right_shoulder[0], right_shoulder[1] - 1]
+            shoulder_angle = calculate_angle(left_shoulder, right_shoulder, vertical_point)
 
             cv2.putText(
                 image,
@@ -139,6 +146,31 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                 2,
                 cv2.LINE_AA,
             )
+
+            # Check if user is standing straight
+            if shoulder_angle < 86:
+                cv2.putText(
+                    image,
+                    "Turn a bit to your left",
+                    (20, 40),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.7,
+                    (0, 0, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+            if shoulder_angle > 92:
+                cv2.putText(
+                    image,
+                    "Turn a bit to your right",
+                    (20, 40),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.7,
+                    (0, 0, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+            
 
             if angle_knee > 159:
                 stage = "up"
