@@ -34,7 +34,7 @@ def rescale_frame(frame, percent=50):
 # Getting the video
 angle_min = []
 angle_min_hip = []
-cap = cv2.VideoCapture("squats2.mp4")
+cap = cv2.VideoCapture("squats.mp4")
 
 
 # Curl counter variables
@@ -107,6 +107,17 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                 landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y,
             ]
 
+            # Get the landmarks for the mid hip and neck
+            neck = [(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x + landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x) / 2,
+                    (landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y + landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y) / 2]
+            
+            mid_hip = [(landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x + landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].x) / 2,
+                       (landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y + landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y) / 2]
+
+
+            # Calculate the angle of the spine with respect to the vertical axis
+            spine_angle = calculate_angle(mid_hip, neck, [neck[0], neck[1] - 1])
+
             # Calculate angles
             angle = calculate_angle(right_shoulder, elbow, wrist)
 
@@ -146,6 +157,31 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                 2,
                 cv2.LINE_AA,
             )
+            
+            print(spine_angle)
+            if spine_angle < 170:
+                cv2.putText(
+                    image,
+                    "Bend down a bit",
+                    (20, 60),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.7,
+                    (0, 0, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+            elif spine_angle > 180:
+                cv2.putText(
+                    image,
+                    "Stand up a bit",
+                    (20, 60),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.7,
+                    (0, 0, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+
 
             # Check if user is standing straight
             if shoulder_angle < 86:
