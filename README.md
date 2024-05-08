@@ -4,7 +4,7 @@ Welcome to **Squat Perfect**, a computer vision application designed to count sq
 
 ## Note
 
-Please note that some of the values used in this process, such as the approximated NECK and MID_HIP landmarks or LEFT & RIGHT SHOULDERS, are based on estimations and might not be perfectly accurate. They are derived from other landmarks provided by the MediaPipe Pose model and are used for the purpose of calculating the spine angle. The accuracy of these values, and consequently the spine/pose angle, can be influenced by various factors such as the precision of the pose estimation model and the quality of the input image. Therefore, while this method can provide a general guidance for posture correction, the results should be interpreted with consideration of these potential inaccuracies.
+Please note that some of the values used in this process, such as the approximated NECK and MID_HIP landmarks or LEFT & RIGHT SHOULDERS, are based on estimations and might not be perfectly accurate. They are derived from other landmarks provided by the MediaPipe Pose model and are used for the purpose of calculating the spine angle. The accuracy of these values, and consequently the spine/pose angle, can be influenced by various factors such as the precision of the pose estimation model and the quality of the input image (and I didn't had much videos for estimating these). Therefore, while this method can provide a general guidance for posture correction, the results should be interpreted with consideration of these potential inaccuracies.
 
 ## Overview
 
